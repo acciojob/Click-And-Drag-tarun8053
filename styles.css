@@ -14,7 +14,7 @@ body {
 }
 
 /* defined draggable area */
-.container {
+.items {
   width: 600px;
   height: 600px;
   background: #fff;
