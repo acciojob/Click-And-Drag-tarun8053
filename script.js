@@ -1,4 +1,4 @@
-const container = document.getElementById("container");
+const container = document.getElementById("items");
 const cubes = document.querySelectorAll(".cube");
 
 let active = null;
