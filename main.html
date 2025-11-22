@@ -2,25 +2,95 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Draggable Cubes</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Click and Drag Scroll</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #fafafa;
+    }
+
+    .items {
+      display: flex;
+      overflow-x: scroll;
+      width: 80%;
+      cursor: grab;
+      user-select: none;
+      scroll-behavior: smooth;
+    }
+
+    .items.active {
+      cursor: grabbing;
+    }
+
+    .item {
+      flex: 0 0 auto;
+      width: 150px;
+      height: 150px;
+      background: #3498db;
+      color: white;
+      font-weight: bold;
+      font-size: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 10px;
+      border-radius: 8px;
+    }
+  </style>
 </head>
 <body>
-  <div class="items" id="container">
-    <div class="cube">1</div>
-    <div class="cube">2</div>
-    <div class="cube">3</div>
-    <div class="cube">4</div>
-    <div class="cube">5</div>
-    <div class="cube">6</div>
-    <div class="cube">7</div>
-    <div class="cube">8</div>
-    <div class="cube">9</div>
-    <div class="cube">10</div>
-    <div class="cube">11</div>
-    <div class="cube">12</div>
+  <div class="items">
+    <div class="item">01</div>
+    <div class="item">02</div>
+    <div class="item">03</div>
+    <div class="item">04</div>
+    <div class="item">05</div>
+    <div class="item">06</div>
+    <div class="item">07</div>
+    <div class="item">08</div>
+    <div class="item">09</div>
+    <div class="item">10</div>
+    <div class="item">11</div>
+    <div class="item">12</div>
+    <div class="item">13</div>
+    <div class="item">14</div>
+    <div class="item">15</div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    const slider = document.querySelector('.items');
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    slider.addEventListener('mousedown', (e) => {
+      isDown = true;
+      slider.classList.add('active');
+      startX = e.pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+
+    slider.addEventListener('mouseleave', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+
+    slider.addEventListener('mouseup', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+
+    slider.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - slider.offsetLeft;
+      const walk = (x - startX) * 2; 
+      slider.scrollLeft = scrollLeft - walk;
+    });
+  </script>
 </body>
 </html>
