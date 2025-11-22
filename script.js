@@ -1,46 +1,59 @@
 const container = document.querySelector(".items");
 const cubes = document.querySelectorAll(".item");
 
-let active = null;
-let startX = 0;
-let startY = 0;
+let isDragging = false;
+let activeCube = null;
+let offsetX = 0;
+let offsetY = 0;
 
-cubes.forEach((cube, index) => {
-  cube.style.position = "absolute";
-  cube.style.left = index * 220 + "px";
-  cube.style.top = "100px";
-
-  cube.addEventListener("dragstart", e => e.preventDefault());
-
+// When user clicks a cube
+cubes.forEach(cube => {
   cube.addEventListener("mousedown", (e) => {
-    active = cube;
+    isDragging = true;
+    activeCube = cube;
+
+    // bring cube above others
+    cube.style.position = "absolute";
+    cube.style.zIndex = 999;
 
     const rect = cube.getBoundingClientRect();
-    startX = e.clientX - rect.left;
-    startY = e.clientY - rect.top;
 
-    document.addEventListener("mousemove", onMove);
-    document.addEventListener("mouseup", onUp);
+    // store mouse offset inside cube
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
   });
 });
 
-function onMove(e) {
-  if (!active) return;
+// While mouse moves → move cube
+document.addEventListener("mousemove", (e) => {
+  if (!isDragging || !activeCube) return;
 
-  const rect = container.getBoundingClientRect();
+  const containerRect = container.getBoundingClientRect();
+  const cubeRect = activeCube.getBoundingClientRect();
 
-  let x = e.clientX - rect.left - startX;
-  let y = e.clientY - rect.top - startY;
+  let newLeft = e.clientX - containerRect.left - offsetX;
+  let newTop  = e.clientY - containerRect.top - offsetY;
 
-  x = Math.max(0, Math.min(x, rect.width - active.offsetWidth));
-  y = Math.max(0, Math.min(y, rect.height - active.offsetHeight));
+  // boundary left
+  if (newLeft < 0) newLeft = 0;
 
-  active.style.left = x + "px";
-  active.style.top = y + "px";
-}
+  // boundary top
+  if (newTop < 0) newTop = 0;
 
-function onUp() {
-  active = null;
-  document.removeEventListener("mousemove", onMove);
-  document.removeEventListener("mouseup", onUp);
-}
+  // boundary right
+  if (newLeft + cubeRect.width > containerRect.width)
+    newLeft = containerRect.width - cubeRect.width;
+
+  // boundary bottom
+  if (newTop + cubeRect.height > containerRect.height)
+    newTop = containerRect.height - cubeRect.height;
+
+  activeCube.style.left = newLeft + "px";
+  activeCube.style.top = newTop + "px";
+});
+
+// When user releases mouse
+document.addEventListener("mouseup", () => {
+  isDragging = false;
+  activeCube = null;
+});
